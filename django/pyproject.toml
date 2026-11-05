@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "django-app-update-guard"
+version = "1.0.0"
+description = "Atualização obrigatória de apps Android distribuídos fora da Play Store: publicação de APK, bloqueio 426 e links de download."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "Django>=4.2",
+    "djangorestframework>=3.14",
+]
+
+[tool.setuptools.packages.find]
+include = ["app_update_guard*"]
+
+[tool.setuptools.package-data]
+app_update_guard = ["templates/**/*"]

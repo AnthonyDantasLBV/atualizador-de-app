@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Somente a pasta das atualizações baixadas fica visível para o instalador. -->
+<paths>
+    <cache-path name="app_update_guard" path="app_update_guard/" />
+</paths>

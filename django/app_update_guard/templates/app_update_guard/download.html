@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+{# Para trocar o visual, crie templates/app_update_guard/download.html no seu projeto. #}
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Baixar {{ app_name }}</title>
+  <style>
+    :root { color-scheme: light dark; --fundo: #f5f7fb; --cartao: #fff; --texto: #1f2937; --suave: #6b7280; --borda: #d1d5db; --primaria: #0b5ed7; --erro: #b42318; }
+    @media (prefers-color-scheme: dark) { :root { --fundo: #0f172a; --cartao: #1e293b; --texto: #e5e7eb; --suave: #94a3b8; --borda: #334155; --primaria: #60a5fa; --erro: #f87171; } }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100dvh; display: grid; place-items: center; padding: 16px; background: var(--fundo); color: var(--texto); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    main { width: 100%; max-width: 420px; padding: 28px; border-radius: 14px; background: var(--cartao); box-shadow: 0 10px 30px rgb(0 0 0 / 8%); }
+    h1 { margin: 4px 0 8px; font-size: 26px; line-height: 1.2; }
+    .eyebrow { color: var(--primaria); font-size: 13px; font-weight: 600; }
+    p { margin: 0 0 16px; color: var(--suave); }
+    label { display: block; margin: 16px 0 6px; font-weight: 500; }
+    input { width: 100%; min-height: 46px; padding: 10px 12px; border: 1px solid var(--borda); border-radius: 8px; background: transparent; color: inherit; font: inherit; }
+    .botao { display: block; width: 100%; margin-top: 20px; padding: 13px; border: 0; border-radius: 8px; background: var(--primaria); color: #fff; font: 600 16px/1.2 inherit; text-align: center; text-decoration: none; cursor: pointer; }
+    .erro { margin-top: 12px; color: var(--erro); font-size: 14px; }
+  </style>
+</head>
+<body>
+<main aria-labelledby="titulo">
+  {% if no_version or not version %}
+    <span class="eyebrow">{{ app_name }}</span><h1 id="titulo">Download indisponível</h1><p>O aplicativo ainda não foi publicado. Tente novamente mais tarde.</p>
+  {% elif invalid_link %}
+    <span class="eyebrow">Link indisponível</span><h1 id="titulo">Este link expirou</h1><p>Baixe novamente informando seu usuário e senha.</p>
+    <a class="botao" href="{% url 'app_update_guard:download_page' %}">Baixar com meu acesso</a>
+  {% elif download_url %}
+    <span class="eyebrow">Acesso confirmado</span><h1 id="titulo">Baixe o aplicativo</h1>
+    <p>Versão {{ version.version_name }}{% if version.size %} · {{ version.size|filesizeformat }}{% endif %}. Abra o arquivo no celular Android e permita a instalação, se solicitado.</p>
+    <a class="botao" href="{{ download_url }}">Baixar aplicativo</a>
+  {% else %}
+    <span class="eyebrow">Aplicativo Android</span><h1 id="titulo">Baixar {{ app_name }}</h1>
+    <p>Entre com seu usuário e senha para baixar a versão {{ version.version_name }}.</p>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% for erro in form.non_field_errors %}<div class="erro" role="alert">{{ erro }}</div>{% endfor %}
+      {% for field in form %}
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}
+        {% for erro in field.errors %}<div class="erro">{{ erro }}</div>{% endfor %}
+      {% endfor %}
+      <button class="botao" type="submit">Continuar</button>
+    </form>
+  {% endif %}
+</main>
+</body>
+</html>
